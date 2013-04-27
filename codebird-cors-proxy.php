@@ -62,7 +62,7 @@ array_shift($url);
 array_shift($url);
 $url = implode('/', $url);
 $url = 'https://api.twitter.com/' . $url;
-die($url);
+
 // send request to Twitter API
 $ch = curl_init($url);
 
