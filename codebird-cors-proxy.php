@@ -54,6 +54,23 @@ if (isset($headers_received['X-Authorization'])) {
 $body = null;
 if ($method === 'POST') {
     $body = http_get_request_body();
+
+    // check for media parameter
+    // TODO support multiple media[] params after Twitter allows them
+
+    if (isset($_POST['media']) && is_array($_POST['media'])) {
+        $body = $_POST;
+
+        // write media file to temp
+        $media_file = tempnam(sys_get_temp_dir(), 'codebird-media-');
+        $fp = fopen($media_file, 'w');
+        fwrite($fp, base64_decode($_POST['media'][0]));
+        fclose($fp);
+
+        // add file to uploads
+        unset($body['media']);
+        $body['media[]'] = '@' . $media_file;
+    }
 }
 
 // cut off first subfolder
@@ -80,6 +97,12 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 
 $reply = curl_exec($ch);
+
+// delete media file, if any
+if (isset($media_file) && file_exists($media_file)) {
+    @unlink($media_file);
+}
+
 $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 // split off headers
