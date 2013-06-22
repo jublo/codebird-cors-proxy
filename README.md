@@ -19,4 +19,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 This is the CORS proxy of the Codebird library.
-Please enable the PECL HTTP extension in your PHP environment.

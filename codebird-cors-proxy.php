@@ -24,6 +24,49 @@ namespace CodeBird;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (! function_exists('http_get_request_headers')) {
+    function http_get_request_headers()
+    {
+        $arh = array();
+        $rx_http = '/\AHTTP_/';
+        foreach ($_SERVER as $key => $val) {
+            if (preg_match($rx_http, $key)) {
+                $arh_key = preg_replace($rx_http, '', $key);
+                $rx_matches = array();
+                // do some nasty string manipulations to restore the original letter case
+                // this should work in most cases
+                $rx_matches = explode('_', $arh_key);
+                if (count($rx_matches) > 0 && strlen($arh_key) > 2) {
+                    foreach ($rx_matches as $ak_key => $ak_val) {
+                        $rx_matches[$ak_key] = ucfirst(strtolower($ak_val));
+                    }
+                    $arh_key = implode('-', $rx_matches);
+                }
+                $arh[$arh_key] = $val;
+            }
+        }
+        return $arh;
+    }
+}
+
+if (! function_exists('http_get_request_body')) {
+    function http_get_request_body()
+    {
+        $body = '';
+        $fh   = @fopen('php://input', 'r');
+        if ($fh) {
+            while (! feof($fh)) {
+                $s = fread($fh, 1024);
+                if (is_string($s)) {
+                    $body .= $s;
+                }
+            }
+            fclose($fh);
+        }
+        return $body;
+    }
+}
+
 $url = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -71,6 +114,32 @@ if ($method === 'POST') {
         unset($body['media']);
         $body['media[]'] = '@' . $media_file;
     }
+
+    // check for other base64 parameters
+    foreach ($_POST as $key => $value) {
+        $possible_files = array(
+            // media[] is checked above
+            'image',
+            'banner'
+        );
+
+        if (! in_array($key, $possible_files)) {
+            continue;
+        }
+
+        // skip arrays
+        if (! is_scalar($value)) {
+            continue;
+        }
+
+        // check if valid base64
+        if (base64_decode($mystring, true) === false) {
+            continue;
+        }
+
+        $body[$key] = base64_decode($value);
+    }
+    
 }
 
 // cut off first subfolder
