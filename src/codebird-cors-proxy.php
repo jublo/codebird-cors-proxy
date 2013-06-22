@@ -67,6 +67,21 @@ if (! function_exists('http_get_request_body')) {
     }
 }
 
+$constants = array(
+    'CURLE_SSL_CERTPROBLEM' => 58,
+    'CURLE_SSL_CACERT' => 60,
+    'CURLE_SSL_CACERT_BADFILE' => 77,
+    'CURLE_SSL_CRL_BADFILE' => 82,
+    'CURLE_SSL_ISSUER_ERROR' => 83
+);
+foreach ($constants as $id => $i) {
+    defined($id) or define($id, $i);
+}
+unset($constants);
+unset($i);
+unset($id);
+
+
 $url = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -160,8 +175,9 @@ if ($method === 'POST') {
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
 curl_setopt($ch, CURLOPT_HEADER, 1);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 
@@ -170,6 +186,22 @@ $reply = curl_exec($ch);
 // delete media file, if any
 if (isset($media_file) && file_exists($media_file)) {
     @unlink($media_file);
+}
+
+// certificate validation results
+$validation_result = curl_errno($ch);
+if (in_array(
+        $validation_result,
+        array(
+            CURLE_SSL_CERTPROBLEM,
+            CURLE_SSL_CACERT,
+            CURLE_SSL_CACERT_BADFILE,
+            CURLE_SSL_CRL_BADFILE,
+            CURLE_SSL_ISSUER_ERROR
+        )
+    )
+) {
+    die('Error ' . $validation_result . ' while validating the Twitter API certificate.');
 }
 
 $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
