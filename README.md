@@ -2,7 +2,7 @@ codebird-cors-proxy
 ===================
 *Proxy to the Twitter API, adding CORS headers to replies.*
 
-Copyright (C) 2013 J.M. <me@mynetx.net>
+Copyright (C) 2013 J.M. &lt;me@mynetx.net&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ This is the CORS proxy of the Codebird library.
 ### Requirements
 
 - For use with **codebird-js 2.4.1 or higher**
-- PHP 5.2.0 or higher
+- PHP 5.3.0 or higher
 - CURL extension
 - OpenSSL extension
 
