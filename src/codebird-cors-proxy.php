@@ -6,7 +6,7 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.1.0
+ * @version 1.1.1
  * @author J.M. <me@mynetx.net>
  * @copyright 2013 J.M. <me@mynetx.net>
  *
@@ -23,6 +23,64 @@ namespace CodeBird;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+if (! function_exists('http_get_request_headers')) {
+    function http_get_request_headers()
+    {
+        $arh = array();
+        $rx_http = '/\AHTTP_/';
+        foreach ($_SERVER as $key => $val) {
+            if (preg_match($rx_http, $key)) {
+                $arh_key = preg_replace($rx_http, '', $key);
+                $rx_matches = array();
+                // do some nasty string manipulations to restore the original letter case
+                // this should work in most cases
+                $rx_matches = explode('_', $arh_key);
+                if (count($rx_matches) > 0 && strlen($arh_key) > 2) {
+                    foreach ($rx_matches as $ak_key => $ak_val) {
+                        $rx_matches[$ak_key] = ucfirst(strtolower($ak_val));
+                    }
+                    $arh_key = implode('-', $rx_matches);
+                }
+                $arh[$arh_key] = $val;
+            }
+        }
+        return $arh;
+    }
+}
+
+if (! function_exists('http_get_request_body')) {
+    function http_get_request_body()
+    {
+        $body = '';
+        $fh   = @fopen('php://input', 'r');
+        if ($fh) {
+            while (! feof($fh)) {
+                $s = fread($fh, 1024);
+                if (is_string($s)) {
+                    $body .= $s;
+                }
+            }
+            fclose($fh);
+        }
+        return $body;
+    }
+}
+
+$constants = array(
+    'CURLE_SSL_CERTPROBLEM' => 58,
+    'CURLE_SSL_CACERT' => 60,
+    'CURLE_SSL_CACERT_BADFILE' => 77,
+    'CURLE_SSL_CRL_BADFILE' => 82,
+    'CURLE_SSL_ISSUER_ERROR' => 83
+);
+foreach ($constants as $id => $i) {
+    defined($id) or define($id, $i);
+}
+unset($constants);
+unset($i);
+unset($id);
+
 
 $url = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
@@ -71,6 +129,32 @@ if ($method === 'POST') {
         unset($body['media']);
         $body['media[]'] = '@' . $media_file;
     }
+
+    // check for other base64 parameters
+    foreach ($_POST as $key => $value) {
+        $possible_files = array(
+            // media[] is checked above
+            'image',
+            'banner'
+        );
+
+        if (! in_array($key, $possible_files)) {
+            continue;
+        }
+
+        // skip arrays
+        if (! is_scalar($value)) {
+            continue;
+        }
+
+        // check if valid base64
+        if (base64_decode($mystring, true) === false) {
+            continue;
+        }
+
+        $body[$key] = base64_decode($value);
+    }
+    
 }
 
 // cut off first subfolder
@@ -91,8 +175,9 @@ if ($method === 'POST') {
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
 curl_setopt($ch, CURLOPT_HEADER, 1);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
 
@@ -101,6 +186,22 @@ $reply = curl_exec($ch);
 // delete media file, if any
 if (isset($media_file) && file_exists($media_file)) {
     @unlink($media_file);
+}
+
+// certificate validation results
+$validation_result = curl_errno($ch);
+if (in_array(
+        $validation_result,
+        array(
+            CURLE_SSL_CERTPROBLEM,
+            CURLE_SSL_CACERT,
+            CURLE_SSL_CACERT_BADFILE,
+            CURLE_SSL_CRL_BADFILE,
+            CURLE_SSL_ISSUER_ERROR
+        )
+    )
+) {
+    die('Error ' . $validation_result . ' while validating the Twitter API certificate.');
 }
 
 $httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);

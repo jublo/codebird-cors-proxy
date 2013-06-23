@@ -1,6 +1,10 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.1.1 (2013-06-23)
++ Run without PECL HTTP extension
++ Validate Twitter SSL certificate
+
 1.1.0 (2013-06-15)
 + Support base64-encoded media uploads
 
