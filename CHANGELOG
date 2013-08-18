@@ -1,6 +1,9 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.2.0 (not yet released)
++ Add IIS web.config file
+
 1.1.1 (2013-06-23)
 + Run without PECL HTTP extension
 + Validate Twitter SSL certificate
