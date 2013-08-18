@@ -31,7 +31,7 @@ This is the CORS proxy of the Codebird library.
 - PHP 5.3.0 or higher
 - CURL extension
 - OpenSSL extension
-
+- For IIS, [URL Rewrite](http://www.iis.net/downloads/microsoft/url-rewrite) is required
 
 Set-up
 ------
@@ -48,5 +48,5 @@ To install the Codebird CORS proxy on your server:
 Notes
 -----
 
-Never run your proxy on an unencrypted server connection ("http://").
-Using HTTPS is essential for your user’s security and privacy.
+- Never run your proxy on an unencrypted server connection ("http://").
+  Using HTTPS is essential for your user’s security and privacy.
