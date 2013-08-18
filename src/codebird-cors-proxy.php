@@ -154,15 +154,16 @@ if ($method === 'POST') {
 
         $body[$key] = base64_decode($value);
     }
-    
+
 }
 
-// cut off first subfolder
-$url = explode('/', $url);
-array_shift($url);
-array_shift($url);
-$url = implode('/', $url);
-$url = 'https://api.twitter.com/' . $url;
+// URLs always start with 1.1
+$version_pos = strpos($url, '/1.1/');
+if ($version_pos === -1) {
+    header('HTTP/1.1 412 Precondition failed');
+    die('This proxy only supports requests to API version 1.1.');
+}
+$url = 'https://api.twitter.com' . substr($url, $version_pos);
 
 // send request to Twitter API
 $ch = curl_init($url);
