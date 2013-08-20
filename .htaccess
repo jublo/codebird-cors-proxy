@@ -1,4 +1,5 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteRule ^$ http://www.jublo.net/ [L]
     RewriteRule . codebird-cors-proxy.php [L,QSA]
 </IfModule>
