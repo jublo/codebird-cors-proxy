@@ -32,13 +32,15 @@ This is the CORS proxy of the Codebird library.
 - CURL extension
 - OpenSSL extension
 - For IIS, [URL Rewrite](http://www.iis.net/downloads/microsoft/url-rewrite) is required
+  - Uploading media requires the user account of your IIS Application Pool
+    to have NTFS write permissions to the %TEMP% folder.
 
 Set-up
 ------
 
 To install the Codebird CORS proxy on your server:
 
-1. Upload the ```src``` folder to your webspace.
+1. Upload the folder to your webspace.
 2. Rename the folder to “codebird-cors-proxy”.
 3. In your Javascript, tell codebird-js to use the new proxy server:
     ```javascript
