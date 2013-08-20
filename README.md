@@ -32,6 +32,8 @@ This is the CORS proxy of the Codebird library.
 - CURL extension
 - OpenSSL extension
 - For IIS, [URL Rewrite](http://www.iis.net/downloads/microsoft/url-rewrite) is required
+  - Uploading media requires the user account of your IIS Application Pool
+    to have NTFS write permissions to the %TEMP% folder.
 
 Set-up
 ------
