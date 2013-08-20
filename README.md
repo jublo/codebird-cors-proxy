@@ -38,7 +38,7 @@ Set-up
 
 To install the Codebird CORS proxy on your server:
 
-1. Upload the ```src``` folder to your webspace.
+1. Upload the folder to your webspace.
 2. Rename the folder to “codebird-cors-proxy”.
 3. In your Javascript, tell codebird-js to use the new proxy server:
     ```javascript
