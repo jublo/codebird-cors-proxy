@@ -6,7 +6,7 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.2.1
+ * @version 1.2.2
  * @author J.M. <me@mynetx.net>
  * @copyright 2013 J.M. <me@mynetx.net>
  *
@@ -159,13 +159,13 @@ if ($method === 'POST') {
 
 // URLs always start with 1.1 or oauth
 $version_pos = strpos($url, '/1.1/');
-if ($version_pos === -1) {
+if ($version_pos === false) {
     $version_pos = strpos($url, '/oauth/');
 }
-if ($version_pos === -1) {
+if ($version_pos === false) {
     $version_pos = strpos($url, '/oauth2/');
 }
-if ($version_pos === -1) {
+if ($version_pos === false) {
     header('HTTP/1.1 412 Precondition failed');
     die('This proxy only supports requests to API version 1.1.');
 }
