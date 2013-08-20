@@ -157,8 +157,14 @@ if ($method === 'POST') {
 
 }
 
-// URLs always start with 1.1
+// URLs always start with 1.1 or oauth
 $version_pos = strpos($url, '/1.1/');
+if ($version_pos === -1) {
+    $version_pos = strpos($url, '/oauth/');
+}
+if ($version_pos === -1) {
+    $version_pos = strpos($url, '/oauth2/');
+}
 if ($version_pos === -1) {
     header('HTTP/1.1 412 Precondition failed');
     die('This proxy only supports requests to API version 1.1.');
