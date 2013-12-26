@@ -6,7 +6,7 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.2.2
+ * @version 1.2.3
  * @author J.M. <me@mynetx.net>
  * @copyright 2013 J.M. <me@mynetx.net>
  *
@@ -88,7 +88,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 $cors_headers = array(
     'Access-Control-Allow-Origin: *',
     'Access-Control-Allow-Headers: Origin, X-Authorization',
-    'Access-Control-Allow-Methods: POST, GET, OPTIONS'
+    'Access-Control-Allow-Methods: POST, GET, OPTIONS',
+    'Access-Control-Expose-Headers: '
+        . 'X-Rate-Limit-Limit, X-Rate-Limit-Remaining, X-Rate-Limit-Reset'
 );
 
 foreach($cors_headers as $cors_header) {
