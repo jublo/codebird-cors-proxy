@@ -1,6 +1,9 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.2.3 (2013-12-26)
++ #3 Whitelist rate-limiting headers in CORS
+
 1.2.2 (2013-08-20)
 - Fix oauth method detection code
 

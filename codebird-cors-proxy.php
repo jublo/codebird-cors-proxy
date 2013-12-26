@@ -88,7 +88,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 $cors_headers = array(
     'Access-Control-Allow-Origin: *',
     'Access-Control-Allow-Headers: Origin, X-Authorization',
-    'Access-Control-Allow-Methods: POST, GET, OPTIONS'
+    'Access-Control-Allow-Methods: POST, GET, OPTIONS',
+    'Access-Control-Expose-Headers: '
+        . 'X-Rate-Limit-Limit, X-Rate-Limit-Remaining, X-Rate-Limit-Reset'
 );
 
 foreach($cors_headers as $cors_header) {
