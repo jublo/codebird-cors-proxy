@@ -116,7 +116,8 @@ if ($method === 'POST') {
     $body = http_get_request_body();
 
     // check for media parameter
-    // TODO support multiple media[] params after Twitter allows them
+    // for uploading multiple medias, use media_data, see
+    // https://dev.twitter.com/docs/api/multiple-media-extended-entities
 
     if (isset($_POST['media']) && is_array($_POST['media'])) {
         $body = $_POST;
@@ -171,7 +172,13 @@ if ($version_pos === false) {
     header('HTTP/1.1 412 Precondition failed');
     die('This proxy only supports requests to API version 1.1.');
 }
-$url = 'https://api.twitter.com' . substr($url, $version_pos);
+// use media endpoint if necessary
+$is_media_upload = strpos($url, 'media/upload.json') !== false;
+if ($is_media_upload) {
+    $url = 'https://upload.twitter.com' . substr($url, $version_pos);
+} else {
+    $url = 'https://api.twitter.com' . substr($url, $version_pos);
+}
 
 // send request to Twitter API
 $ch = curl_init($url);
