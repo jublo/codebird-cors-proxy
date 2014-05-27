@@ -1,6 +1,9 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.3.0 (2014-05-27)
++ #4 Allow uploading multiple media (use media_data)
+
 1.2.3 (2013-12-26)
 + #3 Whitelist rate-limiting headers in CORS
 
