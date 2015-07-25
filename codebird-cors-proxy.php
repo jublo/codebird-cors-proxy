@@ -229,7 +229,9 @@ $reply_headers = explode("\r\n", $reply[0]);
 foreach($reply_headers as $reply_header) {
     header($reply_header);
 }
-$reply = $reply[1];
+if (isset($reply[1])) {
+    $reply = $reply[1];
+}
 
 // send back all data untouched
 die($reply);
