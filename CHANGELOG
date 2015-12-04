@@ -1,6 +1,10 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.4.0 (2015-12-04)
++ #6 Support custom content-types
++ Update cacert.pem
+
 1.3.0 (2014-05-27)
 + #4 Allow uploading multiple media (use media_data)
 
