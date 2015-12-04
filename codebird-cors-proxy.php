@@ -6,9 +6,9 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.3.0
+ * @version 1.4.0
  * @author Jublo Solutions <support@jublo.net>
- * @copyright 2013-2014 Jublo Solutions <support@jublo.net>
+ * @copyright 2013-2015 Jublo Solutions <support@jublo.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ namespace CodeBird;
 if (! function_exists('http_get_request_headers')) {
     function http_get_request_headers()
     {
-        $arh = array();
+        $arh = [];
         $rx_http = '/\AHTTP_/';
         foreach ($_SERVER as $key => $val) {
             if (preg_match($rx_http, $key)) {
                 $arh_key = preg_replace($rx_http, '', $key);
-                $rx_matches = array();
+                $rx_matches = [];
                 // do some nasty string manipulations to restore the original letter case
                 // this should work in most cases
                 $rx_matches = explode('_', $arh_key);
@@ -67,13 +67,13 @@ if (! function_exists('http_get_request_body')) {
     }
 }
 
-$constants = array(
+$constants = [
     'CURLE_SSL_CERTPROBLEM' => 58,
     'CURLE_SSL_CACERT' => 60,
     'CURLE_SSL_CACERT_BADFILE' => 77,
     'CURLE_SSL_CRL_BADFILE' => 82,
     'CURLE_SSL_ISSUER_ERROR' => 83
-);
+];
 foreach ($constants as $id => $i) {
     defined($id) or define($id, $i);
 }
@@ -85,13 +85,13 @@ unset($id);
 $url = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-$cors_headers = array(
+$cors_headers = [
     'Access-Control-Allow-Origin: *',
     'Access-Control-Allow-Headers: Origin, X-Authorization, Content-Type',
     'Access-Control-Allow-Methods: POST, GET, OPTIONS',
     'Access-Control-Expose-Headers: '
         . 'X-Rate-Limit-Limit, X-Rate-Limit-Remaining, X-Rate-Limit-Reset'
-);
+];
 
 foreach($cors_headers as $cors_header) {
     header($cors_header);
@@ -103,7 +103,7 @@ if ($method == 'OPTIONS') {
 
 // get request headers
 $headers_received = http_get_request_headers();
-$headers = array('Expect:');
+$headers = ['Expect:'];
 
 // extract authorization header
 if (isset($headers_received['X-Authorization'])) {
@@ -141,11 +141,11 @@ if ($method === 'POST') {
 
     // check for other base64 parameters
     foreach ($_POST as $key => $value) {
-        $possible_files = array(
+        $possible_files = [
             // media[] is checked above
             'image',
             'banner'
-        );
+        ];
 
         if (! in_array($key, $possible_files)) {
             continue;
@@ -214,13 +214,13 @@ if (isset($media_file) && file_exists($media_file)) {
 $validation_result = curl_errno($ch);
 if (in_array(
         $validation_result,
-        array(
+        [
             CURLE_SSL_CERTPROBLEM,
             CURLE_SSL_CACERT,
             CURLE_SSL_CACERT_BADFILE,
             CURLE_SSL_CRL_BADFILE,
             CURLE_SSL_ISSUER_ERROR
-        )
+        ]
     )
 ) {
     die('Error ' . $validation_result . ' while validating the Twitter API certificate.');
