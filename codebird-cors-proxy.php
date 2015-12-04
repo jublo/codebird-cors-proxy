@@ -87,7 +87,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 $cors_headers = array(
     'Access-Control-Allow-Origin: *',
-    'Access-Control-Allow-Headers: Origin, X-Authorization',
+    'Access-Control-Allow-Headers: Origin, X-Authorization, Content-Type',
     'Access-Control-Allow-Methods: POST, GET, OPTIONS',
     'Access-Control-Expose-Headers: '
         . 'X-Rate-Limit-Limit, X-Rate-Limit-Remaining, X-Rate-Limit-Reset'
@@ -114,6 +114,12 @@ if (isset($headers_received['X-Authorization'])) {
 $body = null;
 if ($method === 'POST') {
     $body = http_get_request_body();
+
+    // allow custom content types
+    if (isset($_SERVER['CONTENT_TYPE'])) {
+        $headers[] = 'Content-Type: '
+            . str_replace(["\r", "\n"], [' ', ' '], $_SERVER['CONTENT_TYPE']);
+    }
 
     // check for media parameter
     // for uploading multiple medias, use media_data, see
