@@ -6,7 +6,7 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.4.0
+ * @version 1.5.0
  * @author Jublo Solutions <support@jublo.net>
  * @copyright 2013-2015 Jublo Solutions <support@jublo.net>
  *
@@ -87,7 +87,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 $cors_headers = [
     'Access-Control-Allow-Origin: *',
-    'Access-Control-Allow-Headers: Origin, X-Authorization, Content-Type',
+    'Access-Control-Allow-Headers: '
+        . 'Origin, X-Authorization, Content-Type, Content-Range, '
+        . 'X-TON-Expires, X-TON-Content-Type, X-TON-Content-Length',
     'Access-Control-Allow-Methods: POST, GET, OPTIONS',
     'Access-Control-Expose-Headers: '
         . 'X-Rate-Limit-Limit, X-Rate-Limit-Remaining, X-Rate-Limit-Reset'
@@ -166,8 +168,16 @@ if ($method === 'POST') {
 
 }
 
-// URLs always start with 1.1 or oauth
-$version_pos = strpos($url, '/1.1/');
+// URLs always start with 1.1, oauth or a separate API prefix
+$api_host = 'ton.twitter.com';
+$version_pos = strpos($url, '/ton/1.1/');
+if ($version_pos !== false) {
+    $version_pos += 4; // strip '/ton' prefix
+}
+if ($version_pos === false) {
+    $version_pos = strpos($url, '/1.1/');
+    $api_host = 'api.twitter.com';
+}
 if ($version_pos === false) {
     $version_pos = strpos($url, '/oauth/');
 }
@@ -175,16 +185,32 @@ if ($version_pos === false) {
     $version_pos = strpos($url, '/oauth2/');
 }
 if ($version_pos === false) {
+    $version_pos = strpos($url, '/ads/0/');
+    $api_host = 'ads-api.twitter.com';
+    if ($version_pos !== false) {
+        $version_pos += 4; // strip '/ads' prefix
+    }
+}
+if ($version_pos === false) {
+    $version_pos = strpos($url, '/ads-sandbox/0/');
+    $api_host = 'ads-api-sandbox.twitter.com';
+    if ($version_pos !== false) {
+        $version_pos += 12; // strip '/ads-sandbox' prefix
+    }
+}
+if ($version_pos === false) {
     header('HTTP/1.1 412 Precondition failed');
-    die('This proxy only supports requests to API version 1.1.');
+    die(
+        'This proxy only supports requests to REST API version 1.1, '
+        . 'to the Twitter TON API and to the Twitter Ads API.'
+    );
 }
 // use media endpoint if necessary
 $is_media_upload = strpos($url, 'media/upload.json') !== false;
 if ($is_media_upload) {
-    $url = 'https://upload.twitter.com' . substr($url, $version_pos);
-} else {
-    $url = 'https://api.twitter.com' . substr($url, $version_pos);
+    $api_host = 'upload.twitter.com';
 }
+$url = 'https://' . $api_host . substr($url, $version_pos);
 
 // send request to Twitter API
 $ch = curl_init($url);
