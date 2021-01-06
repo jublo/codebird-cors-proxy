@@ -2,7 +2,7 @@ codebird-cors-proxy
 ===================
 *Proxy to the Twitter API, adding CORS headers to replies.*
 
-Copyright (C) 2013-2015 Jublo Solutions &lt;support@jublo.net&gt;
+Copyright (C) 2013-2021 Jublo Limited &lt;support@jublo.net&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 This is the CORS proxy of the Codebird library.
 
+Limited support available at [www.jublo.net](https://www.jublo.net)
+
 ### Codebird versions
 
 - JavaScript: https://github.com/jublonet/codebird-js
@@ -31,7 +33,7 @@ This is the CORS proxy of the Codebird library.
 - PHP 5.5.0 or higher
 - CURL extension
 - OpenSSL extension
-- For IIS, [URL Rewrite](http://www.iis.net/downloads/microsoft/url-rewrite) is required
+- For IIS, [URL Rewrite](https://www.iis.net/downloads/microsoft/url-rewrite) is required
   - Uploading media requires the user account of your IIS Application Pool
     to have NTFS write permissions to the %TEMP% folder.
 

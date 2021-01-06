@@ -1,6 +1,10 @@
 codebird-cors-proxy - changelog
 ===============================
 
+1.6.0 (2020-01-06)
++ Update cacert.pem
++ Update copyright notice
+
 1.5.0 (2015-12-05)
 + Support TON API
 + Support Ads API and its sandbox
