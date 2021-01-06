@@ -6,9 +6,9 @@ namespace CodeBird;
  * Proxy to the Twitter API, adding CORS headers to replies.
  *
  * @package codebird
- * @version 1.5.0
- * @author Jublo Solutions <support@jublo.net>
- * @copyright 2013-2015 Jublo Solutions <support@jublo.net>
+ * @version 1.6.0
+ * @author Jublo Limited <support@jublo.net>
+ * @copyright 2013-2021 Jublo Limited <support@jublo.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
