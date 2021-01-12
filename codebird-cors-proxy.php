@@ -259,7 +259,9 @@ $reply = explode("\r\n\r\n", $reply, 2);
 $reply_headers = explode("\r\n", $reply[0]);
 
 foreach($reply_headers as $reply_header) {
-    header($reply_header);
+    if (strpos($reply_header, 'transfer-encoding') === false) {
+        header($reply_header);
+    }
 }
 if (isset($reply[1])) {
     $reply = $reply[1];
